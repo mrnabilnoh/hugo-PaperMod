@@ -39,7 +39,7 @@ jobs:
       - name: Update Theme to Latest commit
         run: git submodule update --remote --merge
 
-      - name: Setup Hugo
+      - name: Setup Hugo v${{ github.event.inputs.hugoVersion }}
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: "${{ github.event.inputs.hugoVersion }}"
