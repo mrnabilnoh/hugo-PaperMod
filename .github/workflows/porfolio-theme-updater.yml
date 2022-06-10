@@ -12,8 +12,8 @@ jobs:
     name: Building Themes
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout Base Theme Repo
+        uses: actions/checkout@v3
         
   Deploy:
     name: Deploy Hugo Website
@@ -22,7 +22,7 @@ jobs:
     environment: 
       name: Production
     steps:
-      - name: Checkout Hugo Website
+      - name: Checkout Hugo Website Repo
         uses: actions/checkout@v3
         with:
           repository: ${{ secrets.REPO_TARGET }}
@@ -48,4 +48,4 @@ jobs:
           git config --local user.name "GitHub Actions"
           git add --all
           git commit -m 'chore: Update Latest Theme' || echo "No changes to commit"
-          git push origin || echo "No changes to commit
+          git push origin || echo "No changes to commit"
