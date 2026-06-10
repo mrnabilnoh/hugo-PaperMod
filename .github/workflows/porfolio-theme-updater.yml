@@ -10,7 +10,7 @@ on:
       hugoVersion:
         description: "Hugo Version"
         required: false
-        default: "0.125.7"
+        default: "0.146.0"
 
 jobs:
   Build:
@@ -45,7 +45,7 @@ jobs:
           hugo-version: "${{ github.event.inputs.hugoVersion }}"
           
       - name: Build Hugo
-        run: hugo --gc --verbose --minify
+        run: hugo --gc --logLevel info --minify
         
       - name: Commit Change And Push
         run: |
