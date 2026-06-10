@@ -54,25 +54,39 @@ jobs:
 
       - name: Patch exampleSite for Hugo v${{ env.HUGO_VERSION }}
         run: |
-          [ -f config.yml ] || { echo "Missing exampleSite/config.yml"; exit 1; }
-          [ -f content/posts/rich-content.md ] || { echo "Missing exampleSite/content/posts/rich-content.md"; exit 1; }
+          [ -f config.yml ] || { echo "Missing required file: exampleSite/config.yml in current directory"; exit 1; }
+          [ -f content/posts/rich-content.md ] || { echo "Missing required file: exampleSite/content/posts/rich-content.md in current directory"; exit 1; }
           python - <<'PY'
+          import re
+          import sys
           from pathlib import Path
+
           config = Path("config.yml")
           rich_content = Path("content/posts/rich-content.md")
 
-          config.write_text(
-              config.read_text().replace(
-                  "paginate: 5",
-                  "pagination:\n  pagerSize: 5",
+          config_content = config.read_text()
+          if "pagination:" not in config_content:
+              config_content, replaced = re.subn(
+                  r"(?m)^paginate:\s*(\d+)\s*$",
+                  r"pagination:\n  pagerSize: \1",
+                  config_content,
+                  count=1,
               )
-          )
-          rich_content.write_text(
-              rich_content.read_text().replace(
-                  "{{< twitter_simple 1085870671291310081 >}}",
-                  '{{< twitter_simple user="GoHugoIO" id="1085870671291310081" >}}',
+              if replaced != 1:
+                  sys.exit("Could not patch deprecated paginate key in config.yml")
+              config.write_text(config_content)
+
+          rich_content_text = rich_content.read_text()
+          if "twitter_simple user=" not in rich_content_text:
+              rich_content_text, replaced = re.subn(
+                  r"{{<\s*twitter_simple\s+(\d+)\s*>}}",
+                  r'{{< twitter_simple user="GoHugoIO" id="\1" >}}',
+                  rich_content_text,
+                  count=1,
               )
-          )
+              if replaced != 1:
+                  sys.exit("Could not patch twitter_simple shortcode in content/posts/rich-content.md")
+              rich_content.write_text(rich_content_text)
           PY
 
       - name: Build with Hugo
