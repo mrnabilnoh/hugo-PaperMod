@@ -54,8 +54,26 @@ jobs:
 
       - name: Patch exampleSite for Hugo v${{ env.HUGO_VERSION }}
         run: |
-          sed -i 's/^paginate:[[:space:]]\+5$/pagination:\n  pagerSize: 5/' config.yml
-          sed -i 's/{{< twitter_simple 1085870671291310081 >}}/{{< twitter_simple user="GoHugoIO" id="1085870671291310081" >}}/' content/posts/rich-content.md
+          [ -f config.yml ] || { echo "Missing config.yml"; exit 1; }
+          [ -f content/posts/rich-content.md ] || { echo "Missing content/posts/rich-content.md"; exit 1; }
+          python - <<'PY'
+          from pathlib import Path
+          config = Path("config.yml")
+          rich_content = Path("content/posts/rich-content.md")
+
+          config.write_text(
+              config.read_text().replace(
+                  "paginate: 5",
+                  "pagination:\n  pagerSize: 5",
+              )
+          )
+          rich_content.write_text(
+              rich_content.read_text().replace(
+                  "{{< twitter_simple 1085870671291310081 >}}",
+                  '{{< twitter_simple user="GoHugoIO" id="1085870671291310081" >}}',
+              )
+          )
+          PY
 
       - name: Build with Hugo
         run: hugo --buildDrafts --gc
