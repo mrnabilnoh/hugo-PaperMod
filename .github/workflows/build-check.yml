@@ -54,8 +54,8 @@ jobs:
 
       - name: Patch exampleSite for Hugo v${{ env.HUGO_VERSION }}
         run: |
-          [ -f config.yml ] || { echo "Missing config.yml"; exit 1; }
-          [ -f content/posts/rich-content.md ] || { echo "Missing content/posts/rich-content.md"; exit 1; }
+          [ -f config.yml ] || { echo "Missing exampleSite/config.yml"; exit 1; }
+          [ -f content/posts/rich-content.md ] || { echo "Missing exampleSite/content/posts/rich-content.md"; exit 1; }
           python - <<'PY'
           from pathlib import Path
           config = Path("config.yml")
