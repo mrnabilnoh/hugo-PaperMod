@@ -54,8 +54,8 @@ jobs:
 
       - name: Patch exampleSite for Hugo v${{ env.HUGO_VERSION }}
         run: |
-          [ -f config.yml ] || { echo "Missing required file: exampleSite/config.yml in current directory"; exit 1; }
-          [ -f content/posts/rich-content.md ] || { echo "Missing required file: exampleSite/content/posts/rich-content.md in current directory"; exit 1; }
+          [ -f config.yml ] || { echo "Missing required file in checkout: config.yml"; exit 1; }
+          [ -f content/posts/rich-content.md ] || { echo "Missing required file in checkout: content/posts/rich-content.md"; exit 1; }
           python - <<'PY'
           import re
           import sys
@@ -73,7 +73,7 @@ jobs:
                   count=1,
               )
               if replaced != 1:
-                  sys.exit("Could not patch deprecated paginate key in config.yml")
+                  sys.exit("Failed to patch config.yml: deprecated paginate key pattern not found")
               config.write_text(config_content)
 
           rich_content_text = rich_content.read_text()
@@ -85,7 +85,7 @@ jobs:
                   count=1,
               )
               if replaced != 1:
-                  sys.exit("Could not patch twitter_simple shortcode in content/posts/rich-content.md")
+                  sys.exit("Failed to patch content/posts/rich-content.md: twitter_simple positional shortcode not found")
               rich_content.write_text(rich_content_text)
           PY
 
