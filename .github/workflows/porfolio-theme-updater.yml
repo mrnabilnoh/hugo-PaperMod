@@ -45,7 +45,7 @@ jobs:
           hugo-version: "${{ github.event.inputs.hugoVersion }}"
           
       - name: Build Hugo
-        run: hugo --gc --verbose --minify
+        run: hugo --gc --minify
         
       - name: Commit Change And Push
         run: |
