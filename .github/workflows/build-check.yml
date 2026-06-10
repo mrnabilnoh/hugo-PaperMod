@@ -52,5 +52,10 @@ jobs:
       - name: Update theme to Latest commit
         run: git submodule update --remote --merge
 
+      - name: Patch exampleSite for Hugo v${{ env.HUGO_VERSION }}
+        run: |
+          sed -i 's/^paginate:[[:space:]]\+5$/pagination:\n  pagerSize: 5/' config.yml
+          sed -i 's/{{< twitter_simple 1085870671291310081 >}}/{{< twitter_simple user="GoHugoIO" id="1085870671291310081" >}}/' content/posts/rich-content.md
+
       - name: Build with Hugo
         run: hugo --buildDrafts --gc
